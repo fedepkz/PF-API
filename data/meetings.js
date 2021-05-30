@@ -15,10 +15,8 @@ const data = require('./users');
 //     return meetings;
 // }
 
-async function addMeeting(meeting){
-    
+async function addMeeting(meeting){  
     const connectiondb = await connection.getConnection();
-    meeting.members = [];
     const result = await connectiondb.db(db)
                         .collection(tableMeetings)
                         .insertOne(meeting);

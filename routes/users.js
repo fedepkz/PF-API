@@ -14,13 +14,6 @@ const joi = require('joi');
 
 //AGREGAR USER
 router.post('/', async (req, res) =>{
-  // name: joi.string().alphanum().min(3).required(),
-  // lastName: joi.string().alphanum().min(3).required(),
-  // email: joi.string().alphanum().min(3).required(),
-  // password: joi.string().alphanum().min(3).required(),
-  // age: joi.string().alphanum().min(3).required(),
-  // state: joi.string().alphanum().min(3).required()
-  
 
   const result = await data.addUser(req.body);
   res.send(result);
