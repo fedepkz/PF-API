@@ -20,7 +20,12 @@ let objectId = mongodb.ObjectId;
 async function addUser(user){
     
     const connectiondb = await connection.getConnection();
-
+  // name: joi.string().alphanum().min(3).required(),
+  // lastName: joi.string().alphanum().min(3).required(),
+  // email: joi.string().alphanum().min(3).required(),
+  // password: joi.string().alphanum().min(3).required(),
+  // age: joi.string().alphanum().min(3).required(),
+  // state: joi.string().alphanum().min(3).required()
     user.password = await bcrypt.hash(user.password, 8);
     user.contactos = [];
     const result = await connectiondb.db(db)
