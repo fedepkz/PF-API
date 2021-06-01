@@ -40,8 +40,7 @@ async function updateMeeting(meeting){
             fecha: meeting.fecha, 
             members: meeting.members           
         }
-    }
-        
+    }       
     const result = await clientmongo.db(db)
                     .collection(tableMeetings)
                     .updateOne(query, newvalues);
