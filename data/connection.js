@@ -1,4 +1,4 @@
-require(dotenv).config()
+require('dotenv').config()
 const mongoclient = require('mongodb').MongoClient;
 const uri = process.env.MONGO_URI
 const client = new mongoclient(uri, {useUnifiedTopology: true});

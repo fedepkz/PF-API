@@ -1,3 +1,4 @@
+require('dotenv').config()
 const mongodb = require('mongodb');
 const connection = require('./connection');
 const bcrypt = require('bcryptjs');
