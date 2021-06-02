@@ -7,10 +7,12 @@ const joi = require("joi");
 //PODRÍA MODIFICARSE PARA OBTENER TODOS LOS CONTACTOS DE UN USUARIO
 /* GET users listing. */
 // api/users/
-// router.get('/', auth, async function(req, res, next) {
-//   const users = await data.getAllUsers();
-//   res.send(users);
-// });
+// investigar como recibir el token desde el front, y luego volver a colocar "auth"
+router.get('/', async function(req, res, next) {
+  const users = await data.getAllUsers();
+  res.send(users);
+});
+
 
 //AGREGAR USER
 router.post("/", async (req, res) => {
