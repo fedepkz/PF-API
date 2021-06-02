@@ -15,8 +15,8 @@ const joi = require("joi");
 //AGREGAR USER
 router.post("/", async (req, res) => {
   const schemaPost = joi.object({
-    name: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required,
-    lastName: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required,
+    name: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
+    lastName: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
     email: joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
     password: joi.string().alphanum().min(6).required(),
     age: joi.number().integer().min(18).max(120).required(),
