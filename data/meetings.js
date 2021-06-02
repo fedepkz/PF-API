@@ -6,14 +6,14 @@ let objectId = mongodb.ObjectId;
 const data = require('./users');
 
 //PODRÍA MODIFICARSE PARA OBTENER TODOS LOS CONTACTOS DE UN USUARIO
-// async function getAllmeetings(){
-//     const connectiondb = await connection.getConnection();
-//     const meetings = await connectiondb.db('db')
-//                         .collection('tablemeetings')
-//                         .find()
-//                         .toArray();
-//     return meetings;
-// }
+async function getAllmeetings(){
+    const connectiondb = await connection.getConnection();
+    const meetings = await connectiondb.db('db')
+                        .collection('tablemeetings')
+                        .find()
+                        .toArray();
+    return meetings;
+}
 
 async function addMeeting(meeting){  
     const connectiondb = await connection.getConnection();
@@ -40,8 +40,7 @@ async function updateMeeting(meeting){
             fecha: meeting.fecha, 
             members: meeting.members           
         }
-    }
-        
+    }       
     const result = await clientmongo.db(db)
                     .collection(tableMeetings)
                     .updateOne(query, newvalues);

@@ -8,14 +8,14 @@ const tokenPass = 'vidCod'
 let objectId = mongodb.ObjectId;
 
 //PODRÍA MODIFICARSE PARA OBTENER TODOS LOS CONTACTOS DE UN USUARIO
-// async function getAllUsers(){
-//     const connectiondb = await connection.getConnection();
-//     const users = await connectiondb.db('db')
-//                         .collection('tableUsers')
-//                         .find()
-//                         .toArray();
-//     return users;
-// }
+async function getAllUsers(){
+    const connectiondb = await connection.getConnection();
+    const users = await connectiondb.db('db')
+                        .collection('tableUsers')
+                        .find()
+                        .toArray();
+    return users;
+}
 
 async function addUser(user){
     

@@ -8,10 +8,11 @@ const joi = require('joi');
 //PODRÍA MODIFICARSE PARA OBTENER TODAS LAS REUNIONES DE UN USUARIO
 /* GET meetings listing. */
 // api/meetings/
-// router.get('/', auth, async function(req, res, next) {
-//   const meetings = await data.getAllmeetings();
-//   res.send(meetings);
-// });
+// investigar como recibir el token desde el front, y luego volver a colocar "auth"
+router.get('/', async function(req, res, next) {
+  const meetings = await data.getAllmeetings();
+  res.send(meetings);
+});
 
 
 // api/meetings/
