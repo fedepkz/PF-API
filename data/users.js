@@ -1,10 +1,11 @@
+require('dotenv').config()
 const mongodb = require('mongodb');
 const connection = require('./connection');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = 'CovidAlert'
 const tableUsers = 'Usuarios'
-const tokenPass = 'vidCod'
+const tokenPass = process.env.SECRET;
 let objectId = mongodb.ObjectId;
 
 //PODRÍA MODIFICARSE PARA OBTENER TODOS LOS CONTACTOS DE UN USUARIO
