@@ -120,4 +120,4 @@ async function deleteUser(id){
 }
 
 
-module.exports = {addUser, getUser, login, generateAuthToken, addContact, updateUser, deleteUser, getUserByEmail};
+module.exports = {addUser, getUser, login, generateAuthToken, addContact, updateUser, deleteUser, getUserByEmail, getAllUsers};
