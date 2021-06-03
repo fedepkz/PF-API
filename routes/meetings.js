@@ -12,6 +12,7 @@ const joi = require('joi');
 router.get('/', auth, async function(req, res, next) {
   const meetings = await data.getAllmeetings();
   res.send(meetings);
+  
 });
 
 
