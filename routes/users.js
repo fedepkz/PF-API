@@ -8,11 +8,10 @@ const joi = require("joi");
 /* GET users listing. */
 // api/users/
 // investigar como recibir el token desde el front, y luego volver a colocar "auth"
-router.get('/', async function(req, res, next) {
+router.get("/", async function (req, res, next) {
   const users = await data.getAllUsers();
   res.send(users);
 });
-
 
 //AGREGAR USER
 router.post("/", async (req, res) => {
@@ -22,15 +21,18 @@ router.post("/", async (req, res) => {
     email: joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
     password: joi.string().alphanum().min(6).required(),
     age: joi.number().integer().min(18).max(120).required(),
-    state:joi.required(),
+    state: joi.required(),
   });
   const result = schemaPost.validate(req.body);
   if (result.error) {
     res.status(400).send(result.error.details[0].message);
-  } else {
+  } else if (!(await data.getUserByEmail(req.body.email))) {
     let user = req.body;
     await data.addUser(user);
     res.send(result);
+  } else {
+    let error = new Error("el email ya se encuentra registrado");
+    res.status(400).send(error.message);
   }
 });
 
