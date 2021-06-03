@@ -9,9 +9,10 @@ const joi = require('joi');
 /* GET meetings listing. */
 // api/meetings/
 // investigar como recibir el token desde el front, y luego volver a colocar "auth"
-router.get('/', async function(req, res, next) {
+router.get('/', auth, async function(req, res, next) {
   const meetings = await data.getAllmeetings();
   res.send(meetings);
+  
 });
 
 
