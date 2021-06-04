@@ -19,9 +19,9 @@ router.post("/", async (req, res) => {
   const schemaPost = joi.object({
     name: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
     lastName: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
+    date: joi.date().max("now").required(),
     email: joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
     password: joi.string().alphanum().min(6).required(),
-    age: joi.number().integer().min(18).max(120).required(),
     state:joi.required(),
   });
   const result = schemaPost.validate(req.body);
