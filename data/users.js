@@ -21,6 +21,7 @@ async function getAllUsers(){
 async function addUser(user){
     
     const connectiondb = await connection.getConnection();
+    user.email= (user.email).toLowerCase()
     user.password = await bcrypt.hash(user.password, 8);
     user.contactos = [];
     const result = await connectiondb.db(db)
@@ -57,11 +58,12 @@ async function updateUser(user){
 
 async function getUserByEmail(email){
     //agregar un if por el no encontrado 
+    email=email.toLowerCase()
     const connectiondb = await connection.getConnection();
     const user = await connectiondb.db(db)
                         .collection(tableUsers)
                         .findOne({email: email});
-    return user._id;
+    return user;
 }
 
 async function addContact(id, email){   
