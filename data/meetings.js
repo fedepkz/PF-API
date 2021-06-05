@@ -1,15 +1,15 @@
 const mongodb = require('mongodb');
 const connection = require('./connection');
+const data = require('./users');
 const db = 'CovidAlert'
 const tableMeetings = 'Reuniones'
 let objectId = mongodb.ObjectId;
-const data = require('./users');
 
 //PODRÍA MODIFICARSE PARA OBTENER TODOS LOS CONTACTOS DE UN USUARIO
 async function getAllmeetings(){
     const connectiondb = await connection.getConnection();
-    const meetings = await connectiondb.db('db')
-                        .collection('tablemeetings')
+    const meetings = await connectiondb.db(db)
+                        .collection(tableMeetings)
                         .find()
                         .toArray();
     return meetings;
@@ -90,4 +90,4 @@ async function deleteMeeting(id){
 }
 
 
-module.exports = {addMeeting, getMeeting, addContact, updateMeeting, deleteMeeting};
+module.exports = {addMeeting, getMeeting, addContact, updateMeeting, deleteMeeting, getAllmeetings};
