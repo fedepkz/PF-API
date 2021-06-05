@@ -18,10 +18,10 @@ router.get('/', auth, async function(req, res, next) {
 
 // api/meetings/
 //AGREGAR MEETING
-router.get('/', async (req, resp) =>{
-    // const result = funcion que devuelve todos los contactos del usuario
-    // res.send(result);
-});
+// router.get('/', async (req, resp) =>{
+//     // const result = funcion que devuelve todos los contactos del usuario
+//     // res.send(result);
+// });
 router.post('/', async (req, res) =>{
     // name: joi.string().alphanum().min(3).required(),
     // fecha: joi.string().alphanum().min(3).required(),
@@ -76,7 +76,5 @@ router.delete('/:id', async (req, res)=>{
       res.status(200).send('Usuario eliminado');
   }
 });
-
-
 
 module.exports = router;
