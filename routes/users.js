@@ -53,7 +53,8 @@ router.get("/:id", async (req, res) => {
 //LOGIN
 router.post("/login", async (req, res) => {
   try {
-    const user = await data.login(req.body.email, req.body.password);
+    let email =req.body.email.toLowerCase()
+    const user = await data.login(email, req.body.password);
     const token = data.generateAuthToken(user);
     console.log(token);
     res.send({ user, token });
@@ -69,20 +70,21 @@ router.post("/:id/addContact", auth, async (req, res) => {
 });
 
 //UPDATE
-router.post("/:id", auth, async (req, res) => {
+//volver a agregar auth
+router.put("/:id",auth, async (req, res) => {
   const schemaUpdate = joi.object({
-    email: joi.string().email({ minDomainSegments: 2, tlds: true }),
-    password: joi.string().alphanum().min(6),
-    repeat_password: Joi.ref("password"),
-    state: joi.required(),
+    email:joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
+    state:joi.required(),
+    contactos:joi.required()
   });
   const result = schemaUpdate.validate(req.body);
-
   if (result.error) {
+    console.log("aca2")
     res.status(400).send(result.error.details[0].message);
   } else {
     let user = req.body;
     user._id = req.params.id;
+    console.log("aca")
     user = await data.updateUser(user);
     res.json(user);
   }
