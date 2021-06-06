@@ -74,6 +74,7 @@ router.post("/:id/addContact", auth, async (req, res) => {
 router.put("/:id",auth, async (req, res) => {
   const schemaUpdate = joi.object({
     email:joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
+    password: joi.string().alphanum().min(6).required(),
     state:joi.required(),
     contactos:joi.required()
   });

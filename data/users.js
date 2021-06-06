@@ -44,11 +44,11 @@ async function updateUser(user){
     const clientmongo = await connection.getConnection();
     const query = {_id: new objectId(user._id)};
 
-    console.log("llego")
-    const newvalues = { $set:{
+            const newvalues = { $set:{
             email: user.email.toLowerCase(),
             contactos:user.contactos,
-            state: user.state
+            state: user.state,
+            password: await bcrypt.hash(user.password, 8),
         }
     }
         
