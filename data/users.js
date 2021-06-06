@@ -43,10 +43,12 @@ async function getUser(id){
 async function updateUser(user){
     const clientmongo = await connection.getConnection();
     const query = {_id: new objectId(user._id)};
-    const newvalues = { $set:{
-            email: user.email,
+
+            const newvalues = { $set:{
+            email: user.email.toLowerCase(),
+            contactos:user.contactos,
+            state: user.state,
             password: await bcrypt.hash(user.password, 8),
-            contactos: user.contactos
         }
     }
         
