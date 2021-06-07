@@ -24,6 +24,9 @@ router.post("/", async (req, res) => {
     state: joi.required()
   });
   const result = schemaPost.validate(req.body);
+  console.log(req.body)
+  console.log(result.error)
+
   if (result.error) {
     res.status(400).send(result.error.details[0].message);
   } else if (!(await data.getUserByEmail(req.body.email))) {
