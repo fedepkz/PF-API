@@ -4,7 +4,6 @@ const data = require('../data/meetings');
 const auth = require('../middleware/auth');
 const joi = require('joi');
 
-
 //PODRÍA MODIFICARSE PARA OBTENER TODAS LAS REUNIONES DE UN USUARIO
 /* GET meetings listing. */
 // api/meetings/
@@ -12,7 +11,6 @@ const joi = require('joi');
 router.get('/', auth, async function(req, res, next) {
   const meetings = await data.getAllmeetings();
   res.send(meetings);
-  
 });
 
 
@@ -23,12 +21,22 @@ router.get('/', auth, async function(req, res, next) {
 //     // res.send(result);
 // });
 router.post('/', async (req, res) =>{
-    // name: joi.string().alphanum().min(3).required(),
-    // fecha: joi.string().alphanum().min(3).required(),
-    // place: joi.string().alphanum().min(3)
-    
-  const result = await data.addMeeting(req.body);
-  res.send(result);
+  const schemaPost = joi.object({
+    name: joi.string().alphanum().min(3).required(),
+    fecha: joi.date().required(),
+    place: joi.string().min(3).required(),
+    participants: joi.required()
+  })
+  console.log(schemaPost);
+  const result = schemaPost.validate(req.body);
+  console.log(result);
+  if(result.error){
+    res.status(400).send(result.error.details[0].message)
+  }else{
+    let meeting = req.body;
+    await data.addMeeting(meeting)
+    res.send(result)
+  }
 });
 
 //FIND
@@ -37,7 +45,7 @@ router.get('/:id', async (req,res)=>{
   if(meeting){
       res.json(meeting);
   } else {
-      res.status(404).send('Reunion no encontrado');
+      res.status(404).send('Reunion no encontrada');
   }
 });
 
@@ -70,10 +78,10 @@ router.post('/:id', auth, async (req, res) => {
 router.delete('/:id', async (req, res)=>{
   const meeting = await data.getMeeting(req.params.id)
   if(!meeting){
-      res.status(404).send('Usuario no encontrado');
+      res.status(404).send('Reunion no encontrada');
   } else {
       data.deleteMeeting(req.params.id);
-      res.status(200).send('Usuario eliminado');
+      res.status(200).send('Reunion eliminada');
   }
 });
 
