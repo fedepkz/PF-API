@@ -17,14 +17,15 @@ router.get("/", auth, async function (req, res, next) {
 router.post("/", async (req, res) => {
   const schemaPost = joi.object({
     name: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
-    lastName: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
+    lastname: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
     date: joi.date().max("now").required(),
     email: joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
     password: joi.string().alphanum().min(6).required(),
     state: joi.required(),
   });
+  console.log(schemaPost)
   const result = schemaPost.validate(req.body);
-
+  
   if (result.error) {
     res.status(400).send(result.error.details[0].message);
   } else if (!(await data.getUserByEmail(req.body.email))) {

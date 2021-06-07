@@ -1,15 +1,15 @@
 const mongodb = require('mongodb');
 const connection = require('./connection');
+const data = require('./users');
 const db = 'CovidAlert'
 const tableMeetings = 'Reuniones'
 let objectId = mongodb.ObjectId;
-const data = require('./users');
 
 //PODRÍA MODIFICARSE PARA OBTENER TODOS LOS CONTACTOS DE UN USUARIO
 async function getAllmeetings(){
     const connectiondb = await connection.getConnection();
-    const meetings = await connectiondb.db('db')
-                        .collection('tablemeetings')
+    const meetings = await connectiondb.db(db)
+                        .collection(tableMeetings)
                         .find()
                         .toArray();
     return meetings;
@@ -28,8 +28,13 @@ async function getMeeting(id){
     const connectiondb = await connection.getConnection();
     const meeting = await connectiondb.db(db)
                         .collection(tableMeetings)
-                        .findOne({_id: new objectId(id)});
+                        .findOne({_id: new objectId(id)}); 
+    if(meeting==null){
+        throw new Error('Reunion no encontrada');
+    }
+
     return meeting;
+
 }
 
 
@@ -64,7 +69,12 @@ async function addContact(id, email){
     
     
     const members = meeting.members;
-    members.push(nuevoContacto);
+    if(nuevoContacto==null){
+        nuevoContacto.Error;
+    }else{
+        members.push(nuevoContacto);
+    }
+
     console.log(members);
     const query = {_id: new objectId(meeting._id)};
     const newvalues = { $set:{
@@ -90,4 +100,4 @@ async function deleteMeeting(id){
 }
 
 
-module.exports = {addMeeting, getMeeting, addContact, updateMeeting, deleteMeeting};
+module.exports = {addMeeting, getMeeting, addContact, updateMeeting, deleteMeeting, getAllmeetings};
