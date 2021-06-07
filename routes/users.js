@@ -8,7 +8,7 @@ const joi = require("joi");
 /* GET users listing. */
 // api/users/
 // investigar como recibir el token desde el front, y luego volver a colocar "auth"
-router.get('/', auth, async function(req, res, next) {
+router.get("/", auth, async function (req, res, next) {
   const users = await data.getAllUsers();
   res.send(users);
 });
@@ -21,11 +21,9 @@ router.post("/", async (req, res) => {
     date: joi.date().max("now").required(),
     email: joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
     password: joi.string().alphanum().min(6).required(),
-    state: joi.required()
+    state: joi.required(),
   });
   const result = schemaPost.validate(req.body);
-  console.log(req.body)
-  console.log(result.error)
 
   if (result.error) {
     res.status(400).send(result.error.details[0].message);
@@ -56,7 +54,7 @@ router.get("/:id", async (req, res) => {
 //LOGIN
 router.post("/login", async (req, res) => {
   try {
-    let email =req.body.email.toLowerCase()
+    let email = req.body.email.toLowerCase();
     const user = await data.login(email, req.body.password);
     const token = data.generateAuthToken(user);
     console.log(token);
@@ -74,21 +72,19 @@ router.post("/:id/addContact", auth, async (req, res) => {
 
 //UPDATE
 //volver a agregar auth
-router.put("/:id",auth, async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const schemaUpdate = joi.object({
-    email:joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
+    email: joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
     password: joi.string().alphanum().min(6).required(),
-    state:joi.required(),
-    contactos:joi.required()
+    state: joi.required(),
+    contactos: joi.required(),
   });
   const result = schemaUpdate.validate(req.body);
   if (result.error) {
-    console.log("aca2")
     res.status(400).send(result.error.details[0].message);
   } else {
     let user = req.body;
     user._id = req.params.id;
-    console.log("aca")
     user = await data.updateUser(user);
     res.json(user);
   }
