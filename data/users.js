@@ -45,10 +45,12 @@ async function updateUser(user){
     const query = {_id: new objectId(user._id)};
 
             const newvalues = { $set:{
-            email: user.email.toLowerCase(),
-            contactos:user.contactos,
-            state: user.state,
-            password: await bcrypt.hash(user.password, 8),
+                name: user.name,
+                lastname: user.lastname,
+                email: user.email.toLowerCase(),
+                contactos:user.contactos,
+                state: user.state,
+                
         }
     }
         
