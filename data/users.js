@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = 'CovidAlert'
 const tableUsers = 'Usuarios'
+const tableMeetings = 'Reuniones'
 const tokenPass = process.env.SECRET;
 let objectId = mongodb.ObjectId;
 
@@ -31,12 +32,21 @@ async function addUser(user){
 }
 
 async function getUser(id){
-    //agregar un if por el no encontrado 
     const connectiondb = await connection.getConnection();
     const user = await connectiondb.db(db)
                         .collection(tableUsers)
                         .findOne({_id: new objectId(id)});
     return user;
+}
+
+async function getMeetingsById(id){
+    const connectiondb = await connection.getConnection();
+    const meetings = await connectiondb.db(db)
+                        .collection(tableMeetings)
+                        .find({participants : {$elemMatch:{_id:id}}})
+                        .toArray();
+    console.log(id);
+    return meetings;
 }
 
 
@@ -45,10 +55,12 @@ async function updateUser(user){
     const query = {_id: new objectId(user._id)};
 
             const newvalues = { $set:{
-            email: user.email.toLowerCase(),
-            contactos:user.contactos,
-            state: user.state,
-            password: await bcrypt.hash(user.password, 8),
+                name: user.name,
+                lastname: user.lastname,
+                email: user.email.toLowerCase(),
+                contactos:user.contactos,
+                state: user.state,
+                
         }
     }
         
@@ -128,4 +140,4 @@ async function deleteUser(id){
 }
 
 
-module.exports = {addUser, getUser, login, generateAuthToken, addContact, updateUser, deleteUser, getUserByEmail, getAllUsers};
+module.exports = {addUser, getUser, login, generateAuthToken, addContact, updateUser, deleteUser, getUserByEmail, getAllUsers, getMeetingsById};
