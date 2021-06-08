@@ -28,8 +28,13 @@ async function getMeeting(id){
     const connectiondb = await connection.getConnection();
     const meeting = await connectiondb.db(db)
                         .collection(tableMeetings)
-                        .findOne({_id: new objectId(id)});
+                        .findOne({_id: new objectId(id)}); 
+    if(meeting==null){
+        throw new Error('Reunion no encontrada');
+    }
+
     return meeting;
+
 }
 
 
@@ -64,7 +69,12 @@ async function addContact(id, email){
     
     
     const members = meeting.members;
-    members.push(nuevoContacto);
+    if(nuevoContacto==null){
+        nuevoContacto.Error;
+    }else{
+        members.push(nuevoContacto);
+    }
+
     console.log(members);
     const query = {_id: new objectId(meeting._id)};
     const newvalues = { $set:{
