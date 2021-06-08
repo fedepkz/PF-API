@@ -27,9 +27,9 @@ router.post('/', async (req, res) =>{
     place: joi.string().min(3).required(),
     participants: joi.required()
   })
-  console.log(schemaPost);
+  console.log(req.body);
   const result = schemaPost.validate(req.body);
-  console.log(result);
+  //console.log(result);
   if(result.error){
     res.status(400).send(result.error.details[0].message)
   }else{

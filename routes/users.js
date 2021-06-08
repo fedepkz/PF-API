@@ -51,6 +51,15 @@ router.get("/:id", async (req, res) => {
     console.log(error);
   }
 });
+//MEETINGS FINDER
+router.get("/meetings/:id", async (req, res) => {
+  try {
+    const meetings = await data.getMeetingsById(req.params.id);
+    res.json(meetings)
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 //LOGIN
 router.post("/login", async (req, res) => {
