@@ -16,10 +16,10 @@ const joi = require('joi');
  *        id:
  *          type: string
  *          description: The auto-generated id of the meeting
- *        meetingName:
+ *        name:
  *          type: string
  *          description: The meeting name
- *        placeName:
+ *        place:
  *          type: string
  *          description: The meeting place name
  *        participants:
@@ -83,7 +83,7 @@ router.get('/', auth, async function(req, res, next) {
  *      404:
  *        description: The meeting was not found
  */
-router.get('/:id', async (req,res)=>{
+router.get('/:id', auth, async (req,res)=>{
   const meeting = await data.getMeeting(req.params.id);
   if(meeting){
       res.json(meeting);
@@ -114,10 +114,10 @@ router.get('/:id', async (req,res)=>{
   *       400:
   *         description: You need permissions
  */
-router.post('/', async (req, res) =>{
+router.post('/', auth, async (req, res) =>{
   const schemaPost = joi.object({
     name: joi.string().alphanum().min(3).required(),
-    fecha: joi.date().required(),
+    date: joi.date().required(),
     place: joi.string().min(3).required(),
     participants: joi.required()
   })
@@ -163,11 +163,10 @@ router.post('/', async (req, res) =>{
  *        description: The meeting was not found
  */
 router.put('/:id', auth, async (req, res) => {
-  //validaciones, a mejorar, agregar en addmeeting
   const schema = joi.object({
-    fecha: joi.string().alphanum().min(3).required(),
-    // password: joi.string().alphanum().min(3).required(),
-    //year: joi.number().min(1900).max(2020).required()
+    name: joi.string().alphanum().min(3).required(),
+    date: joi.date().required(),
+    place: joi.string().min(3).required()
   });
   const result = schema.validate(req.body);
   
@@ -204,7 +203,7 @@ router.put('/:id', auth, async (req, res) => {
  *      404:
  *        description: The meeting was not found
  */
-router.delete('/:id', async (req, res)=>{
+router.delete('/:id', auth, async (req, res)=>{
   const meeting = await data.getMeeting(req.params.id)
   if(!meeting){
       res.status(404).send('Reunion no encontrada');

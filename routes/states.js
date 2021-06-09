@@ -74,7 +74,7 @@ router.get('/', auth, async function(req, res) {
  *      404:
  *        description: The state was not found
  */
-router.get('/:id', async (req,res)=>{
+router.get('/:id', auth, async (req,res)=>{
   const state = await data.getState(req.params.id);
   if(state){
       res.json(state);
@@ -106,7 +106,7 @@ router.get('/:id', async (req,res)=>{
   *       400:
   *         description: You need permissions
  */
-router.post('/', async (req, res) =>{
+router.post('/', auth, async (req, res) =>{
   const schemaPost = joi.object({
     description: joi.string().min(3).required(),
   })
@@ -150,7 +150,7 @@ router.post('/', async (req, res) =>{
  *      404:
  *        description: The state was not found
  */
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   const schema = joi.object({
     description: joi.string().min(3).required(),
   });
@@ -189,7 +189,7 @@ router.put('/:id', async (req, res) => {
  *      404:
  *        description: The state was not found
  */
-router.delete('/:id', async (req, res)=>{
+router.delete('/:id', auth, async (req, res)=>{
   console.log("Body" + req.body + " params " + req.params.id)
   const state = await data.getState(req.params.id)
   if(!state){
