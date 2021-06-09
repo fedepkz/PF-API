@@ -45,7 +45,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/',swaggerUI.serve, swaggerUI.setup(openapiSpecification))
+app.use('/api/docs/v1',swaggerUI.serve, swaggerUI.setup(openapiSpecification))
 app.use('/api/users', usersRouter);
 app.use('/api/meetings', meetingsRouter);
 app.use('/api/states', statesRouter);

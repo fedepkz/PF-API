@@ -155,7 +155,7 @@ router.post("/", async (req, res) => {
   });
   console.log(schemaPost)
   const result = schemaPost.validate(req.body);
-  
+  console.log(result)
   if (result.error) {
     res.status(400).send(result.error.details[0].message);
   } else if (!(await data.getUserByEmail(req.body.email))) {
@@ -232,6 +232,7 @@ router.post("/login", async (req, res) => {
     let email = req.body.email.toLowerCase();
     const user = await data.login(email, req.body.password);
     const token = data.generateAuthToken(user);
+    console.log(email + " "+ user +" "+ token)
     console.log(token);
     res.send({ user, token });
   } catch (error) {
