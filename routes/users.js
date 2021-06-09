@@ -51,6 +51,15 @@ router.get("/:id", async (req, res) => {
     console.log(error);
   }
 });
+//MEETINGS FINDER
+router.get("/meetings/:id", async (req, res) => {
+  try {
+    const meetings = await data.getMeetingsById(req.params.id);
+    res.json(meetings)
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 //LOGIN
 router.post("/login", async (req, res) => {
@@ -75,17 +84,19 @@ router.post("/:id/addContact", auth, async (req, res) => {
 //volver a agregar auth
 router.put("/:id", auth, async (req, res) => {
   const schemaUpdate = joi.object({
-    email: joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
-    password: joi.string().alphanum().min(6).required(),
-    state: joi.required(),
-    contactos: joi.required(),
+    _id: joi.required(),
+    name: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
+    lastname: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
+    email:joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
+    password: joi.required(),
+    state:joi.required(),
+    contactos:joi.required()
   });
   const result = schemaUpdate.validate(req.body);
-  if (result.error) {
+  if (result.error) {    
     res.status(400).send(result.error.details[0].message);
   } else {
-    let user = req.body;
-    user._id = req.params.id;
+    let user = req.body;  
     user = await data.updateUser(user);
     res.json(user);
   }
