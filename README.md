@@ -25,11 +25,15 @@ cambios en el estado de salud y permite accionar a tiempo con los recuados neces
 - Meetings
 - States
 
+## Instrucciones tecnicas
+
+- npm install
+
 ## Listado Endpoints
 
 URL: https://salty-bayou-33689.herokuapp.com/api/docs/v1/
 
-## Contributing
+## Contribuyendo
 Las pull requests son bienvenidas. Para cambios importantes, primero abra un problema para discutir lo que le gustaría cambiar..
 
 ## License
