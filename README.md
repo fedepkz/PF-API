@@ -1,6 +1,6 @@
 # CovidAlert
 
-Este repositorio esta dedicado al desarrollo de la aplicacion CovidAlert
+Este repositorio esta dedicado al desarrollo de la api CovidAlert
 
 ## Descripcion
 
