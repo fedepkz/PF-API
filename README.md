@@ -27,7 +27,9 @@ cambios en el estado de salud y permite accionar a tiempo con los recuados neces
 
 ## Instrucciones tecnicas
 
-Instalar el Node Package Manager
+Instalar [NodeJS](https://nodejs.org) (14.17.0) o superior
+
+Una vez dentro del proyecto, instalar el Node Package Manager
 
 ```bash
 npm install
