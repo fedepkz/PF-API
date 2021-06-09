@@ -33,28 +33,7 @@ const joi = require("joi");
  *          description: The user password
  *        state:
  *          type: string
- *          description: The user Health State      
- *    Meeting:
- *      type: object
- *      required:
- *        - name
- *      properties:
- *        id:
- *          type: string
- *          description: The auto-generated id of the meeting
- *        meetingName:
- *          type: string
- *          description: The meeting name
- *        placeName:
- *          type: string
- *          description: The meeting place name
- *        participants:
- *          type: object
- *          description: The neeting participants
- *        date:
- *          type: string
- *          description: The meeting date           
- *           
+ *          description: The user Health State            
  */
 
 
@@ -153,9 +132,9 @@ router.post("/", async (req, res) => {
     password: joi.string().alphanum().min(6).required(),
     state: joi.required(),
   });
-  console.log(schemaPost)
+
   const result = schemaPost.validate(req.body);
-  console.log(result)
+
   if (result.error) {
     res.status(400).send(result.error.details[0].message);
   } else if (!(await data.getUserByEmail(req.body.email))) {
