@@ -77,9 +77,6 @@ async function getUserByEmail(email){
     const user = await connectiondb.db(db)
                         .collection(tableUsers)
                         .findOne({email: email});
-    if(user==null){
-        throw new Error('Usuario no encontrado');
-    }
     
     return user;
 }

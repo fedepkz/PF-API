@@ -88,7 +88,7 @@ router.get("/", auth, async function (req, res, next) {
  *      404:
  *        description: The user was not found
  */
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   try {
     const user = await data.getUser(req.params.id);
     if (user) {
@@ -170,7 +170,7 @@ router.post("/", async (req, res) => {
  *      404:
  *        description: The meetings was not found
  */
-router.get("/meetings/:id", async (req, res) => {
+router.get("/meetings/:id", auth, async (req, res) => {
   try {
     const meetings = await data.getMeetingsById(req.params.id);
     res.json(meetings)
@@ -257,7 +257,6 @@ router.post("/login", async (req, res) => {
  */
 router.put("/:id", auth, async (req, res) => {
   const schemaUpdate = joi.object({
-    _id: joi.required(),
     name: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
     lastname: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
     email:joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
@@ -298,7 +297,7 @@ router.put("/:id", auth, async (req, res) => {
  *      404:
  *        description: The user was not found
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const user = await data.getUser(req.params.id);
   if (!user) {
     res.status(404).send("Usuario no encontrado");
