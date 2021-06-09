@@ -4,16 +4,146 @@ const data = require("../data/users");
 const auth = require("../middleware/auth");
 const joi = require("joi");
 
-//PODRÍA MODIFICARSE PARA OBTENER TODOS LOS CONTACTOS DE UN USUARIO
-/* GET users listing. */
-// api/users/
-// investigar como recibir el token desde el front, y luego volver a colocar "auth"
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    User:
+ *      type: object
+ *      required:
+ *        - name
+ *      properties:
+ *        id:
+ *          type: string
+ *          description: The auto-generated id of the user
+ *        firstname:
+ *          type: string
+ *          description: The user firstname
+ *        lastname:
+ *          type: string
+ *          description: The user lastname
+ *        date:
+ *          type: string
+ *          description: The user birth date
+ *        email:
+ *          type: string
+ *          description: The user email
+ *        password:
+ *          type: string
+ *          description: The user password
+ *        state:
+ *          type: string
+ *          description: The user Health State      
+ *    Meeting:
+ *      type: object
+ *      required:
+ *        - name
+ *      properties:
+ *        id:
+ *          type: string
+ *          description: The auto-generated id of the meeting
+ *        meetingName:
+ *          type: string
+ *          description: The meeting name
+ *        placeName:
+ *          type: string
+ *          description: The meeting place name
+ *        participants:
+ *          type: object
+ *          description: The neeting participants
+ *        date:
+ *          type: string
+ *          description: The meeting date           
+ *           
+ */
+
+
+/**
+ * @swagger
+ * tags:
+ *    name: Users
+ *    description: The Covid Alert managing Users API  
+ */
+
+/**
+ * @swagger
+ * /api/users:
+ *  get:
+ *    summary: Get all users
+ *    tags: [Users]
+ *    responses:
+ *      200:
+ *        description: A list of users.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/User'
+ */
 router.get("/", auth, async function (req, res, next) {
   const users = await data.getAllUsers();
   res.send(users);
 });
 
-//AGREGAR USER
+/**
+ * @swagger
+ * /api/users/{id}:
+ *  get:
+ *    summary: Get user by id
+ *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    responses:
+ *      200:
+ *        description: The user description by id
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *      404:
+ *        description: The user was not found
+ */
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await data.getUser(req.params.id);
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404).send("Usuario no encontrado");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+/**
+ * @swagger
+  * /api/users:
+  *   post:
+  *     summary: Create a new user
+  *     tags: [Users]
+  *     requestBody:
+  *       required: true
+  *       content:
+  *        application/json:
+  *           schema:
+  *             $ref: '#/components/schemas/User'
+  *     responses:
+  *       200:
+  *         description: The user was successfully created
+  *         content:
+  *          application/json:
+  *             schema:
+  *               $ref: '#/components/schemas/User'
+  *       400:
+  *         description: You need permissions
+ */
 router.post("/", async (req, res) => {
   const schemaPost = joi.object({
     name: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
@@ -38,20 +168,29 @@ router.post("/", async (req, res) => {
   }
 });
 
-//FIND
-router.get("/:id", async (req, res) => {
-  try {
-    const user = await data.getUser(req.params.id);
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).send("Usuario no encontrado");
-    }
-  } catch (error) {
-    console.log(error);
-  }
-});
-//MEETINGS FINDER
+/**
+ * @swagger
+ * /api/users/meetings/{id}:
+ *  get:
+ *    summary: Get all meetings by id
+ *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    responses:
+ *      200:
+ *        description: The meetings by user id
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Meeting'
+ *      404:
+ *        description: The meetings was not found
+ */
 router.get("/meetings/:id", async (req, res) => {
   try {
     const meetings = await data.getMeetingsById(req.params.id);
@@ -61,7 +200,33 @@ router.get("/meetings/:id", async (req, res) => {
   }
 });
 
-//LOGIN
+/**
+ * @swagger
+  * /api/users/login:
+  *   post:
+  *     summary: Login 
+  *     tags: [Users]
+  *     requestBody:
+  *       required: true
+  *       content:
+  *        application/json:
+  *           schema:
+  *             type: object
+  *             properties:
+  *               email:
+  *                 type: string
+  *               name:
+  *                 type: string
+  *     responses:
+  *       200:
+  *         description: Access Granted
+  *         content:
+  *          application/json:
+  *             schema:
+  *               $ref: '#/components/schemas/User'
+  *       401:
+  *         description: Account or Password missmatch
+ */
 router.post("/login", async (req, res) => {
   try {
     let email = req.body.email.toLowerCase();
@@ -74,14 +239,42 @@ router.post("/login", async (req, res) => {
   }
 });
 
-//AGREGAR CONTACTO
-router.post("/:id/addContact", auth, async (req, res) => {
-  const result = await data.addContact(req.params.id, req.body.email);
-  res.send(result);
-});
+// //AGREGAR CONTACTO
+// router.post("/:id/addContact", auth, async (req, res) => {
+//   const result = await data.addContact(req.params.id, req.body.email);
+//   res.send(result);
+// });
 
-//UPDATE
-//volver a agregar auth
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *  put:
+ *    summary: Update the user by id
+ *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    requestBody:
+ *       required: true  
+ *       content:
+ *        application/json:
+ *           schema: 
+ *            $ref: '#/components/schemas/User'
+ *    responses:
+ *      200:
+ *        description: The user was updated
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *      404:
+ *        description: The user was not found
+ */
 router.put("/:id", auth, async (req, res) => {
   const schemaUpdate = joi.object({
     _id: joi.required(),
@@ -101,7 +294,30 @@ router.put("/:id", auth, async (req, res) => {
     res.json(user);
   }
 });
-//DELETE
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *  delete:
+ *    summary: remove the user by id
+ *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    responses:
+ *      200:
+ *        description: The user was deleted
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *      404:
+ *        description: The user was not found
+ */
 router.delete("/:id", async (req, res) => {
   const user = await data.getUser(req.params.id);
   if (!user) {
