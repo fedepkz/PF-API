@@ -51,6 +51,7 @@ async function getMeetingsById(id){
 
 
 async function updateUser(user){
+    console.log(user)
     const clientmongo = await connection.getConnection();
     const query = {_id: new objectId(user._id)};
 

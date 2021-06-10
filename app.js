@@ -25,7 +25,7 @@ const options = {
 };
 
 const openapiSpecification = swaggerJsdoc(options);
-console.log(openapiSpecification)
+//console.log(openapiSpecification)
 
 var usersRouter = require('./routes/users');
 var meetingsRouter = require('./routes/meetings');
