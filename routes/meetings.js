@@ -3,44 +3,88 @@ var router = express.Router();
 const data = require('../data/meetings');
 const auth = require('../middleware/auth');
 const joi = require('joi');
+const merge=require('../data/merge')
 
-//PODRÍA MODIFICARSE PARA OBTENER TODAS LAS REUNIONES DE UN USUARIO
-/* GET meetings listing. */
-// api/meetings/
-// investigar como recibir el token desde el front, y luego volver a colocar "auth"
+/**
+ * @swagger
+ * components:
+ *  schemas:      
+ *    Meeting:
+ *      type: object
+ *      required:
+ *        - name
+ *      properties:
+ *        id:
+ *          type: string
+ *          description: The auto-generated id of the meeting
+ *        name:
+ *          type: string
+ *          description: The meeting name
+ *        place:
+ *          type: string
+ *          description: The meeting place name
+ *        participants:
+ *          type: object
+ *          description: The meeting participants
+ *        date:
+ *          type: string
+ *          description: The meeting date                 
+ */
+
+
+/**
+ * @swagger
+ * tags:
+ *    name: Meetings
+ *    description: The Covid Alert managing Meetings API  
+ */
+
+/**
+ * @swagger
+ * /api/meetings:
+ *  get:
+ *    summary: Get all meetings
+ *    tags: [Meetings]
+ *    responses:
+ *      200:
+ *        description: A list of meetings.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/Meeting'
+ */
 router.get('/', auth, async function(req, res, next) {
   const meetings = await data.getAllmeetings();
   res.send(meetings);
 });
 
 
-// api/meetings/
-//AGREGAR MEETING
-// router.get('/', async (req, resp) =>{
-//     // const result = funcion que devuelve todos los contactos del usuario
-//     // res.send(result);
-// });
-router.post('/', async (req, res) =>{
-  const schemaPost = joi.object({
-    name: joi.string().alphanum().min(3).required(),
-    fecha: joi.date().required(),
-    place: joi.string().min(3).required(),
-    participants: joi.required()
-  })
-  console.log(req.body);
-  const result = schemaPost.validate(req.body);
-  //console.log(result);
-  if(result.error){
-    res.status(400).send(result.error.details[0].message)
-  }else{
-    let meeting = req.body;
-    await data.addMeeting(meeting)
-    res.send(result)
-  }
-});
-
-//FIND
-router.get('/:id', async (req,res)=>{
+/**
+ * @swagger
+ * /api/meetings/{id}:
+ *  get:
+ *    summary: Get meeting by id
+ *    tags: [Meetings]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The meeting id
+ *    responses:
+ *      200:
+ *        description: The meeting description by id
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Meeting'
+ *      404:
+ *        description: The meeting was not found
+ */
+router.get('/:id', auth, async (req,res)=>{
   const meeting = await data.getMeeting(req.params.id);
   if(meeting){
       res.json(meeting);
@@ -49,19 +93,81 @@ router.get('/:id', async (req,res)=>{
   }
 });
 
-//AGREGAR CONTACTO A LA REUNION
-router.post('/:id/addContact', auth, async (req, res) => { 
-  const result = await data.addContact(req.params.id, req.body.email);
-  res.send(result);
+/**
+ * @swagger
+  * /api/meetings:
+  *   post:
+  *     summary: Create a new meeting
+  *     tags: [Meetings]
+  *     requestBody:
+  *       required: true
+  *       content:
+  *        application/json:
+  *           schema:
+  *             $ref: '#/components/schemas/Meeting'
+  *     responses:
+  *       200:
+  *         description: The meeting was successfully created
+  *         content:
+  *          application/json:
+  *             schema:
+  *               $ref: '#/components/schemas/Meeting'
+  *       400:
+  *         description: You need permissions
+ */
+router.post('/', auth, async (req, res) =>{
+  const schemaPost = joi.object({
+    name: joi.string().alphanum().min(3).required(),
+    date: joi.date().required(),
+    place: joi.string().min(3).required(),
+    participants: joi.required()
+  })
+  console.log(req.body);
+  const result = schemaPost.validate(req.body);
+  if(result.error){
+    res.status(400).send(result.error.details[0].message)
+  }else{
+    let meeting = req.body;
+    await data.addMeeting(meeting)
+    res.send(result)
+    merge.mergeContacts(meeting.participants, meeting.date)
+  }
 });
 
-//UPDATE
-router.post('/:id', auth, async (req, res) => {
-  //validaciones, a mejorar, agregar en addmeeting
+/**
+ * @swagger
+ * /api/meetings/{id}:
+ *  put:
+ *    summary: Update the meeting by id
+ *    tags: [Meetings]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The meeting id
+ *    requestBody:
+ *       required: true  
+ *       content:
+ *        application/json:
+ *           schema: 
+ *            $ref: '#/components/schemas/Meeting'
+ *    responses:
+ *      200:
+ *        description: The meeting was updated
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Meeting'
+ *      404:
+ *        description: The meeting was not found
+ */
+router.put('/:id', auth, async (req, res) => {
   const schema = joi.object({
-    fecha: joi.string().alphanum().min(3).required(),
-    // password: joi.string().alphanum().min(3).required(),
-    //year: joi.number().min(1900).max(2020).required()
+    name: joi.string().alphanum().min(3).required(),
+    date: joi.date().required(),
+    place: joi.string().min(3).required()
   });
   const result = schema.validate(req.body);
   
@@ -74,8 +180,31 @@ router.post('/:id', auth, async (req, res) => {
       res.json(meeting);
   }   
 });
-//DELETE
-router.delete('/:id', async (req, res)=>{
+
+/**
+ * @swagger
+ * /api/meetings/{id}:
+ *  delete:
+ *    summary: remove the meeting by id
+ *    tags: [Meetings]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The meeting id
+ *    responses:
+ *      200:
+ *        description: The meeting was deleted
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Meeting'
+ *      404:
+ *        description: The meeting was not found
+ */
+router.delete('/:id', auth, async (req, res)=>{
   const meeting = await data.getMeeting(req.params.id)
   if(!meeting){
       res.status(404).send('Reunion no encontrada');
@@ -85,4 +214,7 @@ router.delete('/:id', async (req, res)=>{
   }
 });
 
+
 module.exports = router;
+
+

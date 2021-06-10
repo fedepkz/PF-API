@@ -4,9 +4,32 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-//var indexRouter = require('./routes/index');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUI = require("swagger-ui-express")
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Covid Alert',
+      version: '1.0.0',
+      description: "This is an API for the application CovidAlert"
+    },
+    servers: [
+      {
+        url: "https://salty-bayou-33689.herokuapp.com",
+      },
+    ],
+  },
+  apis: ['./routes/*.js'], // files containing annotations as above
+};
+
+const openapiSpecification = swaggerJsdoc(options);
+console.log(openapiSpecification)
+
 var usersRouter = require('./routes/users');
 var meetingsRouter = require('./routes/meetings');
+var statesRouter = require('./routes/states');
 
 
 var app = express();
@@ -21,9 +44,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/', indexRouter);
+
+app.use('/api/docs/v1',swaggerUI.serve, swaggerUI.setup(openapiSpecification))
 app.use('/api/users', usersRouter);
 app.use('/api/meetings', meetingsRouter);
+app.use('/api/states', statesRouter);
 
 
 // catch 404 and forward to error handler
