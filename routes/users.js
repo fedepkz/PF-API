@@ -23,7 +23,6 @@ router.post("/", async (req, res) => {
     password: joi.string().alphanum().min(6).required(),
     state: joi.required(),
   });
-  console.log(schemaPost)
   const result = schemaPost.validate(req.body);
   
   if (result.error) {

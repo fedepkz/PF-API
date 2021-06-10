@@ -3,6 +3,7 @@ var router = express.Router();
 const data = require('../data/meetings');
 const auth = require('../middleware/auth');
 const joi = require('joi');
+const merge=require('../data/merge')
 
 //PODRÍA MODIFICARSE PARA OBTENER TODAS LAS REUNIONES DE UN USUARIO
 /* GET meetings listing. */
@@ -23,19 +24,19 @@ router.get('/', auth, async function(req, res, next) {
 router.post('/', async (req, res) =>{
   const schemaPost = joi.object({
     name: joi.string().alphanum().min(3).required(),
-    fecha: joi.date().required(),
+    date: joi.date().required(),
     place: joi.string().min(3).required(),
     participants: joi.required()
   })
   console.log(req.body);
   const result = schemaPost.validate(req.body);
-  //console.log(result);
   if(result.error){
     res.status(400).send(result.error.details[0].message)
   }else{
     let meeting = req.body;
     await data.addMeeting(meeting)
     res.send(result)
+    merge.mergeContacts(meeting.participants, meeting.date)
   }
 });
 
@@ -85,4 +86,7 @@ router.delete('/:id', async (req, res)=>{
   }
 });
 
+
 module.exports = router;
+
+
