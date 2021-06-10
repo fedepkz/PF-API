@@ -3,6 +3,7 @@ var router = express.Router();
 const data = require('../data/meetings');
 const auth = require('../middleware/auth');
 const joi = require('joi');
+const merge=require('../data/merge')
 
 /**
  * @swagger
@@ -123,13 +124,13 @@ router.post('/', auth, async (req, res) =>{
   })
   console.log(req.body);
   const result = schemaPost.validate(req.body);
-  //console.log(result);
   if(result.error){
     res.status(400).send(result.error.details[0].message)
   }else{
     let meeting = req.body;
     await data.addMeeting(meeting)
     res.send(result)
+    merge.mergeContacts(meeting.participants, meeting.date)
   }
 });
 
@@ -213,4 +214,7 @@ router.delete('/:id', auth, async (req, res)=>{
   }
 });
 
+
 module.exports = router;
+
+
