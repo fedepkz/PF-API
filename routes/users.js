@@ -97,8 +97,8 @@ router.put("/:id", auth, async (req, res) => {
     res.status(400).send(result.error.details[0].message);
   } else {
     let user = req.body;  
-    user = await data.updateUser(user);
-    res.json(user);
+    response = await data.updateUser(user);
+    res.json(response);
   }
 });
 //DELETE
