@@ -4,18 +4,109 @@ const data = require('../data/states');
 const auth = require('../middleware/auth');
 const joi = require('joi');
 
-//PODRÍA MODIFICARSE PARA OBTENER TODOS LOS ESTADOS
-/* GET states listing. */
-// api/states/
-// investigar como recibir el token desde el front, y luego volver a colocar "auth"
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    State:
+ *      type: object
+ *      required:
+ *        - name
+ *      properties:
+ *        id:
+ *          type: string
+ *          description: The auto-generated id of the state
+ *        description:
+ *          type: string
+ *          description: The state description        
+ */
+
+
+/**
+ * @swagger
+ * tags:
+ *    name: States
+ *    description: The Covid Alert managing states API  
+ */
+
+/**
+ * @swagger
+ * /api/states:
+ *  get:
+ *    summary: Get all states
+ *    tags: [States]
+ *    responses:
+ *      200:
+ *        description: A list of states.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/State'
+ */
 router.get('/', auth, async function(req, res) {
   const states = await data.getAllStates();
   res.send(states);
 });
 
-//AGREGAR ESTADO
+/**
+ * @swagger
+ * /api/states/{id}:
+ *  get:
+ *    summary: Get state by id
+ *    tags: [States]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The state id
+ *    responses:
+ *      200:
+ *        description: The state description by id
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/State'
+ *      404:
+ *        description: The state was not found
+ */
+router.get('/:id', auth, async (req,res)=>{
+  const state = await data.getState(req.params.id);
+  if(state){
+      res.json(state);
+  } else {
+      res.status(404).send('Estado no encontrado');
+  }
+});
 
-router.post('/', async (req, res) =>{
+
+/**
+ * @swagger
+  * /api/states:
+  *   post:
+  *     summary: Create a new state
+  *     tags: [States]
+  *     requestBody:
+  *       required: true
+  *       content:
+  *        application/json:
+  *           schema:
+  *             $ref: '#/components/schemas/State'
+  *     responses:
+  *       200:
+  *         description: The state was successfully created
+  *         content:
+  *          application/json:
+  *             schema:
+  *               $ref: '#/components/schemas/State'
+  *       400:
+  *         description: You need permissions
+ */
+router.post('/', auth, async (req, res) =>{
   const schemaPost = joi.object({
     description: joi.string().min(3).required(),
   })
@@ -29,18 +120,37 @@ router.post('/', async (req, res) =>{
   }
 });
 
-//FIND
-router.get('/:id', async (req,res)=>{
-  const state = await data.getState(req.params.id);
-  if(state){
-      res.json(state);
-  } else {
-      res.status(404).send('Estado no encontrado');
-  }
-});
 
-//UPDATE
-router.put('/:id', async (req, res) => {
+/**
+ * @swagger
+ * /api/states/{id}:
+ *  put:
+ *    summary: Update the state by id
+ *    tags: [States]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The state id
+ *    requestBody:
+ *       required: true  
+ *       content:
+ *        application/json:
+ *           schema: 
+ *            $ref: '#/components/schemas/State'
+ *    responses:
+ *      200:
+ *        description: The state was updated
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/State'
+ *      404:
+ *        description: The state was not found
+ */
+router.put('/:id', auth, async (req, res) => {
   const schema = joi.object({
     description: joi.string().min(3).required(),
   });
@@ -56,8 +166,30 @@ router.put('/:id', async (req, res) => {
   }   
 });
 
-//DELETE
-router.delete('/:id', async (req, res)=>{
+/**
+ * @swagger
+ * /api/states/{id}:
+ *  delete:
+ *    summary: remove the state by id
+ *    tags: [States]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The state id
+ *    responses:
+ *      200:
+ *        description: The state was deleted
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/State'
+ *      404:
+ *        description: The state was not found
+ */
+router.delete('/:id', auth, async (req, res)=>{
   console.log("Body" + req.body + " params " + req.params.id)
   const state = await data.getState(req.params.id)
   if(!state){
