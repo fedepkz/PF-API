@@ -19,12 +19,13 @@ async function actualizarContactos(usuario, arrMeeting, date) {
   for (let i = 0; i < arrMeeting.length; i++) {
     contacto = arrMeeting[i];
     index = usuarioAct.contactos.findIndex(e=>contacto._id===e._id);
+    if(usuarioAct._id!=arrMeeting[i]._id){
     if (index == -1) {
       contacto =Object.assign(contacto, {fecha:date});
       usuarioAct.contactos.push(contacto);
     } else {
       usuarioAct.contactos[index].fecha = date;
-    }
+    }}
   }
   let result = await user.updateUser(usuarioAct);
 }
