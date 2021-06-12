@@ -71,6 +71,38 @@ async function updateUser(user){
     return result;
 }
 
+async function changeStateAndContacts(user){
+    const clientmongo = await connection.getConnection();
+    const query = {_id: new objectId(user._id)};
+
+            const newvalues = { $set:{
+                state: user.state,       
+                contactos:user.contactos       
+        }
+    }
+        
+    const result = await clientmongo.db(db)
+                    .collection(tableUsers)
+                    .updateOne(query, newvalues);
+    return result;
+}
+
+async function changeStateById(user){
+    console.log(user)
+    const clientmongo = await connection.getConnection();
+    const query = {_id: new objectId(user._id)};
+
+            const newvalues = { $set:{
+                state: user.state    
+        }
+    }
+        
+    const result = await clientmongo.db(db)
+                    .collection(tableUsers)
+                    .updateOne(query, newvalues);
+    return result;
+}
+
 async function getUserByEmail(email){
     //agregar un if por el no encontrado 
     email=email.toLowerCase()
@@ -138,4 +170,4 @@ async function deleteUser(id){
 }
 
 
-module.exports = {addUser, getUser, login, generateAuthToken, addContact, updateUser, deleteUser, getUserByEmail, getAllUsers, getMeetingsById};
+module.exports = {addUser, getUser, login, generateAuthToken, addContact, updateUser, deleteUser, getUserByEmail, getAllUsers, getMeetingsById,changeStateAndContacts, changeStateById};
