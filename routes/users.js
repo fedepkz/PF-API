@@ -315,7 +315,7 @@ router.delete("/:id", auth, async (req, res) => {
 
 /**
  * @swagger
- * /api/users/{id}:
+ * /api/users/alertbyuser/{id}:
  *  put:
  *    summary: Update the user and contact list state by user id 
  *    tags: [Users]
