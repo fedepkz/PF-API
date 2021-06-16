@@ -313,41 +313,45 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
-router.put("/changestatebyalert/:id", auth, async (req, res) => {
-
-  console.log(req.body)
-  const schemaUpdate = joi.object({
-    state:joi.required(),
-    contactos: joi.required()
-
-  });
-  const result = schemaUpdate.validate(req.body);
-  
-  if (result.error) {   
-    res.status(400).send(result.error.details[0].message);
-  } else {
-    let user = req.body;  
-    user._id = req.params.id
-    response = await data.changeStateAndContacts(user);
+/**
+ * @swagger
+ * /api/users/{id}:
+ *  put:
+ *    summary: Update the user and contact list state by user id 
+ *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    requestBody:
+ *       required: false  
+ *       content:
+ *        application/json:
+ *           schema: 
+ *            $ref: '#/components/schemas/User'
+ *    responses:
+ *      200:
+ *        description: The user state was updated
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *      404:
+ *        description: The user was not found
+ */
+router.put("/alertbyuser/:id", auth, async (req, res) => {
+  try {
+    response = data.alertChangeStatesByUser(req.params.id);   
     res.json(response);
+  } catch (error) {
+    console.log(error)
   }
 });
 
-router.put("/changestatebyid/:id", auth, async (req, res) => {
-  const schemaUpdate = joi.object({
-    state:joi.required(),
 
-  });
-  const result = schemaUpdate.validate(req.body);
-  
-  if (result.error) {   
-    res.status(400).send(result.error.details[0].message);
-  } else {
-    let user = req.body;  
-    user._id = req.params.id
-    response = await data.changeStateById(user);
-    res.json(response);
-  }
-});
+
 
 module.exports = router;
