@@ -97,6 +97,20 @@ router.get("/:id", auth, async (req, res) => {
       res.status(404).send("Usuario no encontrado");
     }
   } catch (error) {
+    
+  }
+});
+
+router.get("/:id/contactos",auth, async (req, res) => {
+  try {
+    console.log(req.params.id)
+    const user = await data.getUser(req.params.id);
+    if (user) {
+      res.json(user.contactos);
+    } else {
+      res.status(404).send("Usuario no encontrado");
+    }
+  } catch (error) {
     console.log(error);
   }
 });
@@ -210,8 +224,6 @@ router.post("/login", async (req, res) => {
     let email = req.body.email.toLowerCase();
     const user = await data.login(email, req.body.password);
     const token = data.generateAuthToken(user);
-    console.log(email + " "+ user +" "+ token)
-    console.log(token);
     res.send({ user, token });
   } catch (error) {
     res.status(401).send(error.message);
