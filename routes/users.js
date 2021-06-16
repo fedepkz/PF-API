@@ -3,6 +3,7 @@ var router = express.Router();
 const data = require("../data/users");
 const auth = require("../middleware/auth");
 const joi = require("joi");
+const { required } = require("joi");
 
 /**
  * @swagger
@@ -267,7 +268,9 @@ router.post("/login", async (req, res) => {
  *        description: The user was not found
  */
 router.put("/:id", auth, async (req, res) => {
+
   const schemaUpdate = joi.object({
+    
     name: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
     lastname: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
     email:joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
@@ -275,13 +278,17 @@ router.put("/:id", auth, async (req, res) => {
     state:joi.required(),
     contactos:joi.required()
   });
+  console.log( req.body)
   const result = schemaUpdate.validate(req.body);
-  if (result.error) {    
+  
+  if (result.error) { 
+    console.log(result.error)   
     res.status(400).send(result.error.details[0].message);
   } else {
     let user = req.body;  
-    user = await data.updateUser(user);
-    res.json(user);
+    user._id = req.params.id
+    response = await data.updateUser(user);
+    res.json(response);
   }
 });
 
@@ -317,5 +324,46 @@ router.delete("/:id", auth, async (req, res) => {
     res.status(200).send("Usuario eliminado");
   }
 });
+
+/**
+ * @swagger
+ * /api/users/alertbyuser/{id}:
+ *  put:
+ *    summary: Update the user and contact list state by user id 
+ *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    requestBody:
+ *       required: false  
+ *       content:
+ *        application/json:
+ *           schema: 
+ *            $ref: '#/components/schemas/User'
+ *    responses:
+ *      200:
+ *        description: The user state was updated
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *      404:
+ *        description: The user was not found
+ */
+router.put("/alertbyuser/:id", auth, async (req, res) => {
+  try {
+    response = data.alertChangeStatesByUser(req.params.id);   
+    res.json(response);
+  } catch (error) {
+    console.log(error)
+  }
+});
+
+
+
 
 module.exports = router;
