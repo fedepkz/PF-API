@@ -98,6 +98,45 @@ router.get("/:id", auth, async (req, res) => {
       res.status(404).send("Usuario no encontrado");
     }
   } catch (error) {
+    
+  }
+});
+
+/**
+ * @swagger
+ * /api/users/{id}/contactos:
+ *  get:
+ *    summary: Get contacts by user id (sorted by date)
+ *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    responses:
+ *      200:
+ *        description: The user contacs by id
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *      404:
+ *        description: The user was not found
+ */
+
+router.get("/:id/contactos",auth, async (req, res) => {
+  try {
+    console.log(req.params.id)
+    const user = await data.getUser(req.params.id);
+    if (user) {
+      var arr= await data.generateArray(user.contactos);
+      res.json(arr.sort((a, b)=>{return a.fecha.localeCompare(b.fecha)}));
+    } else {
+      res.status(404).send("Usuario no encontrado");
+    }
+  } catch (error) {
     console.log(error);
   }
 });
@@ -211,8 +250,6 @@ router.post("/login", async (req, res) => {
     let email = req.body.email.toLowerCase();
     const user = await data.login(email, req.body.password);
     const token = data.generateAuthToken(user);
-    console.log(email + " "+ user +" "+ token)
-    console.log(token);
     res.send({ user, token });
   } catch (error) {
     res.status(401).send(error.message);
