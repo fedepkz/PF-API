@@ -181,6 +181,22 @@ async function deleteUser(id) {
     .deleteOne({ _id: new objectId(id) });
   return result;
 }
+async function generateArray(userArr) {
+  var arr = userArr.map( (e) =>{ return generateContact(e._id, e.fecha)});
+  return Promise.all(arr).then(res=>{return res})
+}
+async function generateContact(id, fecha) {
+  var user= await getUser(id)
+  var contacto = {
+    _id: user._id,
+    name: user.name,
+    lastname: user.lastname,
+    state: user.state,
+    fecha: fecha,
+  };
+  return contacto;
+  
+}
 
 module.exports = {
   addUser,
@@ -194,4 +210,5 @@ module.exports = {
   getAllUsers,
   getMeetingsById,
   alertChangeStatesByUser,
+  generateArray,
 };

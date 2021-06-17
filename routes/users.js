@@ -102,12 +102,37 @@ router.get("/:id", auth, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/users/{id}/contactos:
+ *  get:
+ *    summary: Get contacts by user id (sorted by date)
+ *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    responses:
+ *      200:
+ *        description: The user contacs by id
+ *        contents:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *      404:
+ *        description: The user was not found
+ */
+
 router.get("/:id/contactos",auth, async (req, res) => {
   try {
     console.log(req.params.id)
     const user = await data.getUser(req.params.id);
     if (user) {
-      res.json(user.contactos);
+      var arr= await data.generateArray(user.contactos);
+      res.json(arr.sort((a, b)=>{return a.fecha.localeCompare(b.fecha)}));
     } else {
       res.status(404).send("Usuario no encontrado");
     }
