@@ -81,7 +81,7 @@ async function alertChangeStatesByUser(id) {
     user.contactos.forEach(async (contacto) => {
       const contactoActual = await getUser(contacto._id);
       if (contactoActual != null) {
-        if (contactoActual.state == estados[1].description) {
+        if (contactoActual.state != estados[0].description) {
           contactoActual.state = estados[2].description;
           changeStateByUser(contactoActual);
         }
@@ -182,11 +182,15 @@ async function deleteUser(id) {
   return result;
 }
 async function generateArray(userArr) {
-  var arr = userArr.map( (e) =>{ return generateContact(e._id, e.fecha)});
-  return Promise.all(arr).then(res=>{return res})
+  var arr = userArr.map((e) => {
+    return generateContact(e._id, e.fecha);
+  });
+  return Promise.all(arr).then((res) => {
+    return res;
+  });
 }
 async function generateContact(id, fecha) {
-  var user= await getUser(id)
+  var user = await getUser(id);
   var contacto = {
     _id: user._id,
     name: user.name,
@@ -195,7 +199,6 @@ async function generateContact(id, fecha) {
     fecha: fecha,
   };
   return contacto;
-  
 }
 
 module.exports = {
