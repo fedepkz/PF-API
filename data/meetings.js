@@ -99,5 +99,21 @@ async function deleteMeeting(id){
     return result;
 }
 
+async function generateArray(meetArr) {
+    var arr = meetArr.map( (e) =>{ return generateParticipant(e._id)});
+    return Promise.all(arr).then(res=>{return res})
+  }
+  async function generateParticipant(id) {
+    var user= await data.getUser(id)
+    var contacto = {
+      _id: user._id,
+      name: user.name,
+      lastname: user.lastname,
+      state: user.state,
+    };
+    return contacto;
+    
+  }
 
-module.exports = {addMeeting, getMeeting, addContact, updateMeeting, deleteMeeting, getAllmeetings};
+
+module.exports = {addMeeting, getMeeting, addContact, updateMeeting, deleteMeeting, getAllmeetings, generateArray};
