@@ -103,26 +103,26 @@ router.get("/:id/participants", auth, async (req, res) => {
 });
 
 /**
- * @swaggers
- * /api/meetings:
- *   post:
- *     summary: Create a new meeting
- *     tags: [Meetings]
- *     requestBody:
- *       required: true
- *       content:
- *        application/json:
- *           schema:
- *             $ref: '#/components/schemas/Meeting'
- *     responses:
- *       200:
- *         description: The meeting was successfully created
- *         content:
- *          application/json:
- *             schema:
- *               $ref: '#/components/schemas/Meeting'
- *       400:
- *         description: You need permissions
+ * @swagger
+  * /api/meetings:
+  *   post:
+  *     summary: Create a new meeting
+  *     tags: [Meetings]
+  *     requestBody:
+  *       required: true
+  *       content:
+  *        application/json:
+  *           schema:
+  *             $ref: '#/components/schemas/Meeting'
+  *     responses:
+  *       200:
+  *         description: The meeting was successfully created
+  *         content:
+  *          application/json:
+  *             schema:
+  *               $ref: '#/components/schemas/Meeting'
+  *       400:
+  *         description: You need permissions
  */
 router.post("/", auth, async (req, res) => {
   const schemaPost = joi.object({
