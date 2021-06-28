@@ -126,9 +126,9 @@ router.get("/:id/participants", auth, async (req, res) => {
  */
 router.post("/", auth, async (req, res) => {
   const schemaPost = joi.object({
-    name: joi.string().alphanum().min(3).required(),
+    name: joi.string().required().min(3).max(50).regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/),
     date: joi.date().required(),
-    place: joi.string().min(3).required(),
+    place: joi.string().required().min(3).max(50).regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/),
     participants: joi.required(),
   });
   console.log(req.body);
