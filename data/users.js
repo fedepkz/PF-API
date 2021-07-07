@@ -54,16 +54,24 @@ async function getMeetingsById(id) {
 async function updateUser(user) {
   const clientmongo = await connection.getConnection();
   const query = { _id: new objectId(user._id) };
+  console.log("EXPOTOKEN" + user.expoToken)
+  let dummy = {
+    name: user.name,
+    lastname: user.lastname,
+    email: user.email.toLowerCase(),
+    contactos: user.contactos,
+    state: user.state,
+  }
+  if (user.expoToken){
+    console.log("entro al if")
+    dummy.expoToken = user.expoToken
+  }
 
   const newvalues = {
-    $set: {
-      name: user.name,
-      lastname: user.lastname,
-      email: user.email.toLowerCase(),
-      contactos: user.contactos,
-      state: user.state,
-    },
+    $set: dummy
+    
   };
+  console.log(JSON.stringify(newvalues))
 
   const result = await clientmongo
     .db(db)

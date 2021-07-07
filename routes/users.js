@@ -3,7 +3,7 @@ var router = express.Router();
 const data = require("../data/users");
 const auth = require("../middleware/auth");
 const joi = require("joi");
-const { required } = require("joi");
+
 
 /**
  * @swagger
@@ -93,6 +93,7 @@ router.get("/:id", auth, async (req, res) => {
   try {
     const user = await data.getUser(req.params.id);
     if (user) {
+      console.log(JSON.stringify(user))
       res.json(user);
     } else {
       res.status(404).send("Usuario no encontrado");
@@ -295,13 +296,15 @@ router.post("/login", async (req, res) => {
 router.put("/:id", auth, async (req, res) => {
 
   const schemaUpdate = joi.object({
-    
+    _id: joi.optional(),
+    date: joi.optional(),
     name: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
     lastname: joi.string().pattern(new RegExp("^[a-zA-Z]{3,30}$")).required(),
     email:joi.string().email({ minDomainSegments: 2, tlds: true }).required(),
     password: joi.required(),
     state:joi.required(),
-    contactos:joi.required()
+    contactos:joi.required(),
+    expoToken: joi.optional()
   });
   console.log( req.body)
   const result = schemaUpdate.validate(req.body);

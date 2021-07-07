@@ -44,11 +44,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//MANEJO DE CACHÉ, PARA EVITAR 304
+app.use(function (req, res, next) {
+  res.set('Cache-control', `no-store`)
+  next()
+})
+
 
 app.use('/api/docs/v1',swaggerUI.serve, swaggerUI.setup(openapiSpecification))
 app.use('/api/users', usersRouter);
 app.use('/api/meetings', meetingsRouter);
 app.use('/api/states', statesRouter);
+
+
 
 
 // catch 404 and forward to error handler
