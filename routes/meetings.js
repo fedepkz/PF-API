@@ -126,6 +126,7 @@ router.get("/:id/participants", auth, async (req, res) => {
  */
 router.post("/", auth, async (req, res) => {
   const schemaPost = joi.object({
+    _hostId: joi.required(),
     name: joi.string().required().min(3).max(50).regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/),
     date: joi.date().required(),
     place: joi.string().required().min(3).max(50).regex(/^\s*\w+(?:[^\w,]+\w+)*[^,\w]*$/),
@@ -135,6 +136,7 @@ router.post("/", auth, async (req, res) => {
   const result = schemaPost.validate(req.body);
   if (result.error) {
     res.status(400).send(result.error.details[0].message);
+    console.log(result.error)
   } else {
     let meeting = req.body;
     await data.addMeeting(meeting);
